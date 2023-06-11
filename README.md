@@ -12,6 +12,8 @@ This branch contains scripts to create and load the  _Northwind_  (`instnwnd.sql
 4. Run the script - This will create a new database called **Northwind**.
 5.  Open the script (`GetOrderSummary.sql`) in a new query window. 
 6.  Run the script - This will create a new stored procedure called **pr_GetOrderSummary** within the Northwind database.
-7. Execute *pr_GetOrderSummary* as desired.
+7.  Open the script (`ExecGetOrderSummary.sql`) in a new query window. 
+8.  Run the script as desired by setting parameters for StartDate, EndDate, CustomerID (optional) and EmployeeID (optional).
+
 
 
