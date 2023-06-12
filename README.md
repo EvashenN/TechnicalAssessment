@@ -14,6 +14,49 @@ This API supports the following bets:
 -    **Straight:**  35 to 1
 
 
+## Examples
+
+ - **Place bet:**
+
+ **POST**  `api/Roulette/bet`
+
+**Sample Request:**
+
+    {
+      "type": "straight",
+      "number": 23,
+      "amount": 100
+    }
+
+ - **Return active bets:**
+
+ **GET**  `api/Roulette/bet`
+ 
+
+ - **Return bet:**
+
+ **GET**  `api/Roulette/bet/1`
+ 
+ 
+
+ - **Spin:**
+
+ **GET**  `api/Roulette/spin`
+ 
+ 
+
+ - **View spins in current play:**
+
+ **GET**  `api/Roulette/previousSpins`
+ 
+ 
+
+ - **Payout winnings:**
+
+ **GET**  `api/Roulette/payout`
+ 
+
+
 
 ## Features
 
