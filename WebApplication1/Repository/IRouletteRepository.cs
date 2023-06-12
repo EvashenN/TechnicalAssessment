@@ -10,6 +10,7 @@ namespace WebApplication1.Repository
     public interface IRouletteRepository
     {
         public Task<IEnumerable<Bet>> ActiveBets();
+        public Task<Bet> BetById(int Id);
         public Task<Bet> PlaceBet(BetDto bet);
         public Task<SpinResult> Spin();
         public Task<SpinResult> SaveSpin(SpinResult spin);

@@ -159,5 +159,15 @@ namespace WebApplication1.Repository
                 await connection.ExecuteAsync(query);
             }
         }
+
+        public async Task<Bet> BetById(int Id)
+        {
+            var query = "SELECT rowid AS Id,Type,Number, Amount,Payout,isWinningBet FROM Bet where rowid = @Id";
+            using (var connection = _context.CreateConnection())
+            {
+                var storedBet = await connection.QuerySingleOrDefaultAsync<Bet>(query, new { Id });
+                return storedBet;
+            }
+        }
     }
 }

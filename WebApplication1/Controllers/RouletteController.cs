@@ -28,6 +28,40 @@ namespace WebApplication1.Controllers
 
         }
 
+        [HttpGet]
+        [Route("bet")]
+        public async Task<IActionResult> Bets()
+        {
+            _logger.LogInfo("Fetch active bets");
+
+            var bets = await _rouletteRepo.ActiveBets();
+
+            _logger.LogInfo("Returned active bets");
+
+            return Ok(bets);
+
+        }
+
+
+        [HttpGet("bet/{Id}")]
+        public async Task<IActionResult> GetBet(int Id)
+        {
+            _logger.LogInfo($"Fetch bet by id: {Id}");
+
+            var bet = await _rouletteRepo.BetById(Id);
+            if (bet == null)
+            {
+                return NotFound();
+
+            }
+            _logger.LogInfo("Returned bet");
+
+            return Ok(bet);
+        }
+
+
+
+
         [HttpPost]
         [Route("bet")]
         public async Task<IActionResult> Bet(BetDto bet)
@@ -43,7 +77,7 @@ namespace WebApplication1.Controllers
 
             _logger.LogInfo("Complete create bet");
 
-            return StatusCode(201, res);
+            return CreatedAtAction("GetBet", new { Id = res.Id }, res);
 
         }
 

@@ -30,6 +30,103 @@ namespace web_api_tests.Controllers
         }
 
         [Fact]
+        public async Task GetBets_WhenCalled_ReturnsOkResult()
+        {
+            // Act
+            var okResult = await _controller.Bets();
+
+            // Assert
+            Assert.IsType<OkObjectResult>(okResult as OkObjectResult);
+        }
+
+        [Fact]
+        public async Task GetBets_WhenCalled_ReturnsAllItems()
+        {
+            //Arrange
+            var bets = new List<Bet>()
+            {
+                new Bet() { Id=1,Type="red",Amount=10,Number=0},
+                new Bet() { Id=1,Type="odd",Amount=100,Number=0},
+                new Bet() { Id=1,Type="straight",Amount=25,Number=3 }
+            }.AsEnumerable();
+
+            _mockRepo.Setup(r => r.ActiveBets()).Returns(Task.FromResult(bets));
+
+            // Act
+            var okResult = await _controller.Bets() as OkObjectResult;
+
+            // Assert
+            var items = Assert.IsType<List<Bet>>(okResult.Value);
+            Assert.Equal(bets.Count(), items.Count);
+        }
+
+
+        [Fact]
+        public async Task GetBetById_UnknownIdPassed_ReturnsNotFoundResult()
+        {
+            // Arrange
+            Bet bResult = null;
+            int SuppliedId = 100;
+            _mockRepo.Setup(r => r.BetById(SuppliedId)).Returns(Task.FromResult(bResult));
+
+            // Act
+            var notFoundResult = await _controller.GetBet(SuppliedId);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(notFoundResult);
+        }
+
+        [Fact]
+        public async Task GetBetById_ExistingIdPassed_ReturnsOkResult()
+        {
+            // Arrange
+            int SuppliedId = 1;
+
+            var response = new Bet()
+            {
+                Id = 4,
+                Type = "straight",
+                Number = 40,
+                Amount = 50
+            };
+
+            _mockRepo.Setup(r => r.BetById(SuppliedId)).Returns(Task.FromResult(response));
+
+            // Act
+            var okResult = await _controller.GetBet(SuppliedId);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(okResult as OkObjectResult);
+        }
+
+        [Fact]
+        public async Task GetBetById_ExistingIdPassed_ReturnsCorrectObject()
+        {
+            // Arrange
+            int SuppliedId = 1;
+
+            var response = new Bet()
+            {
+                Id = 4,
+                Type = "straight",
+                Number = 40,
+                Amount = 50
+            };
+
+            _mockRepo.Setup(r => r.BetById(SuppliedId)).Returns(Task.FromResult(response));
+
+            // Act
+            var okResult = await _controller.GetBet(SuppliedId) as OkObjectResult;
+
+            // Assert
+            Assert.IsType<Bet>(okResult.Value);
+            Assert.Equal(response.Id, (okResult.Value as Bet).Id);
+        }
+
+
+
+
+        [Fact]
         public async Task PlaceBet_InvalidObjectPassed_ReturnsBadRequest()
         {
             // Arrange
@@ -89,14 +186,21 @@ namespace web_api_tests.Controllers
                 Amount = 50
             };
 
-            _mockRepo.Setup(r => r.PlaceBet(testBet)).Returns(Task.FromResult(It.IsAny<Bet>()));
+            var response = new Bet()
+            {
+                Id = 3,
+                Type = "straight",
+                Number = 30,
+                Amount = 50
+            };
+
+            _mockRepo.Setup(r => r.PlaceBet(testBet)).Returns(Task.FromResult(response));
 
             // Act        
             var createdResponse = await _controller.Bet(testBet);
-            var obj = createdResponse as ObjectResult;
 
             //Assert
-            Assert.Equal(201, obj.StatusCode);
+            Assert.IsType<CreatedAtActionResult>(createdResponse);
         }
 
         [Fact]
@@ -180,8 +284,9 @@ namespace web_api_tests.Controllers
                 new SpinResultDto() { SpinPayout=80,WinNumber=17 }
             }.AsEnumerable();
 
-            // Act
             _mockRepo.Setup(r => r.ShowPreviousSpins()).Returns(Task.FromResult(spins));
+
+            // Act
             var okResult = await _controller.ShowPreviousSpins() as OkObjectResult;
 
             // Assert
